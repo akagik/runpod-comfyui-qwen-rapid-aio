@@ -53,7 +53,7 @@ COPY patches/nodes_qwen.v2.py "${QWEN_RAPID_APP_DIR}/patches/nodes_qwen.v2.py"
 COPY scripts/ "${QWEN_RAPID_APP_DIR}/scripts/"
 COPY tests/ "${QWEN_RAPID_APP_DIR}/tests/"
 COPY workflows/ "${QWEN_RAPID_APP_DIR}/workflows/"
-COPY LICENSE UPSTREAM.md README.md "${QWEN_RAPID_APP_DIR}/"
+COPY Dockerfile LICENSE UPSTREAM.md README.md "${QWEN_RAPID_APP_DIR}/"
 
 # Phr00t's v2 file is a replacement for the built-in node, not an additional
 # custom node. Verify both sides before replacing it so an upstream base change
