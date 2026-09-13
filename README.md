@@ -7,7 +7,7 @@ image に bake することもできる。
 Published image:
 
 ```text
-ghcr.io/akagik/runpod-comfyui-qwen-rapid-aio:0.1.0
+ghcr.io/akagik/runpod-comfyui-qwen-rapid-aio:0.1.1
 ```
 
 ## 固定構成
@@ -35,7 +35,7 @@ bash -n scripts/download-model.sh scripts/start.sh
 docker buildx build \
   --platform linux/amd64 \
   --load \
-  -t qwen-rapid-aio:0.1.0 \
+  -t qwen-rapid-aio:0.1.1 \
   .
 ```
 
@@ -49,7 +49,7 @@ docker run --rm --gpus all -p 8188:8188 \
   -e RAPID_VARIANT=nsfw-v23 \
   -e AUTO_DOWNLOAD_QWEN_RAPID=true \
   -v /local/persistent/workspace:/workspace \
-  qwen-rapid-aio:0.1.0
+  qwen-rapid-aio:0.1.1
 ```
 
 公開・ungatedのため、現在はHugging Face token不要。将来必要になった場合もtokenを
@@ -65,7 +65,7 @@ docker buildx build \
   --platform linux/amd64 \
   --build-arg BAKE_MODEL=true \
   --load \
-  -t qwen-rapid-aio:0.1.0-baked \
+  -t qwen-rapid-aio:0.1.1-baked \
   .
 ```
 
@@ -77,7 +77,7 @@ docker buildx build \
   --build-arg BAKE_MODEL=true \
   --secret id=hf_token,env=HF_TOKEN \
   --load \
-  -t qwen-rapid-aio:0.1.0-baked \
+  -t qwen-rapid-aio:0.1.1-baked \
   .
 ```
 
@@ -85,7 +85,8 @@ docker buildx build \
 
 `Qwen-Rapid-AIO-NSFW-v23.safetensors` だけを使用する。正確なrevision、サイズ、SHA-256は
 [models.tsv](manifests/models.tsv) に固定している。既存ファイルのサイズまたはhashが異なる場合、
-downloaderは上書きせず停止する。
+downloaderは上書きせず停止する。cache blobと配置先のhardlinkを使えないVolumeでは、
+mount pathが変わっても有効なVolume内相対symlinkを使い、28.43GBの二重保存を避ける。
 
 ## Workflow
 
@@ -101,7 +102,7 @@ downloaderは上書きせず停止する。
 RunPod Templateの既定値:
 
 ```text
-Image: ghcr.io/akagik/runpod-comfyui-qwen-rapid-aio:0.1.0
+Image: ghcr.io/akagik/runpod-comfyui-qwen-rapid-aio:0.1.1
 Container Disk: 40 GB
 Ports: 8188/http, 22/tcp
 MODE_TO_RUN=pod

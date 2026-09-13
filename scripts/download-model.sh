@@ -105,7 +105,20 @@ verify_full "$source_path"
 temporary="$target.part.$$"
 trap 'rm -f "$temporary"' EXIT
 if ! ln "$source_path" "$temporary" 2>/dev/null; then
-  cp --reflink=auto --sparse=always "$source_path" "$temporary"
+  # Some RunPod Network Volume backends expose both paths on the same mount but
+  # do not support hardlinks. Keep a relative link inside the volume so the
+  # checkpoint remains valid when the volume is mounted at /workspace on Pods
+  # or /runpod-volume on Serverless workers, without storing a second 28 GB copy.
+  relative_source="$($python_bin - "$source_path" "$(dirname "$temporary")" <<'PY'
+import os
+import sys
+
+print(os.path.relpath(sys.argv[1], start=sys.argv[2]))
+PY
+)"
+  if ! ln -s "$relative_source" "$temporary" 2>/dev/null; then
+    cp --reflink=auto --sparse=always "$source_path" "$temporary"
+  fi
 fi
 verify_full "$temporary"
 mv -T "$temporary" "$target"

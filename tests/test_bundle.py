@@ -56,6 +56,10 @@ def main() -> int:
     assert "--mount=type=secret,id=hf_token" in dockerfile
     assert not any(path.stat().st_size > 1_000_000 for path in ROOT.rglob("*") if path.is_file())
 
+    downloader = (ROOT / "scripts" / "download-model.sh").read_text(encoding="utf-8")
+    assert "os.path.relpath" in downloader
+    assert 'ln -s "$relative_source" "$temporary"' in downloader
+
     print("bundle tests: OK")
     return 0
 
