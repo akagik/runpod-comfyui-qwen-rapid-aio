@@ -1,0 +1,244 @@
+{
+  "schemaVersion": 1,
+  "id": "qwen-rapid-aio-nsfw-v23-edit",
+  "version": 1,
+  "name": "Qwen Rapid AIO NSFW v23 · target-latent edit",
+  "description": "Phr00t Qwen-Image-Edit-Rapid-AIO NSFW v23を作者v2 target-latent encoderで使う画像編集workflow。4 steps、CFG 1、Euler ancestral / beta。",
+  "apiWorkflow": {
+    "1": {
+      "class_type": "LoadImage",
+      "inputs": {
+        "image": "reference.png"
+      }
+    },
+    "2": {
+      "class_type": "CheckpointLoaderSimple",
+      "inputs": {
+        "ckpt_name": "Qwen-Rapid-AIO-NSFW-v23.safetensors"
+      }
+    },
+    "3": {
+      "class_type": "EmptyLatentImage",
+      "inputs": {
+        "width": 1344,
+        "height": 768,
+        "batch_size": 1
+      }
+    },
+    "4": {
+      "class_type": "TextEncodeQwenImageEditPlus",
+      "inputs": {
+        "clip": [
+          "2",
+          1
+        ],
+        "prompt": "Picture 1 の人物の顔、髪、ポーズ、視線、カメラ、照明、背景、フレーミングを維持する。指定した変更だけを適用し、自然な皮膚のきめと解剖学的整合性を保つ。",
+        "vae": [
+          "2",
+          2
+        ],
+        "image1": [
+          "1",
+          0
+        ],
+        "target_latent": [
+          "3",
+          0
+        ]
+      },
+      "_meta": {
+        "title": "Positive · author v2 target-latent encoder"
+      }
+    },
+    "5": {
+      "class_type": "TextEncodeQwenImageEditPlus",
+      "inputs": {
+        "clip": [
+          "2",
+          1
+        ],
+        "prompt": " ",
+        "vae": [
+          "2",
+          2
+        ]
+      },
+      "_meta": {
+        "title": "Negative (CFG 1.0)"
+      }
+    },
+    "6": {
+      "class_type": "KSampler",
+      "inputs": {
+        "model": [
+          "2",
+          0
+        ],
+        "seed": 2026091301,
+        "steps": 4,
+        "cfg": 1.0,
+        "sampler_name": "euler_ancestral",
+        "scheduler": "beta",
+        "positive": [
+          "4",
+          0
+        ],
+        "negative": [
+          "5",
+          0
+        ],
+        "latent_image": [
+          "3",
+          0
+        ],
+        "denoise": 1.0
+      }
+    },
+    "7": {
+      "class_type": "VAEDecode",
+      "inputs": {
+        "samples": [
+          "6",
+          0
+        ],
+        "vae": [
+          "2",
+          2
+        ]
+      }
+    },
+    "8": {
+      "class_type": "SaveImage",
+      "inputs": {
+        "images": [
+          "7",
+          0
+        ],
+        "filename_prefix": "image/rcm/qwen-rapid-aio-nsfw-v23-edit"
+      }
+    }
+  },
+  "parameters": [
+    {
+      "key": "prompt",
+      "label": "編集指示",
+      "type": "textarea",
+      "required": true,
+      "default": null,
+      "options": [],
+      "mapping": {
+        "nodeId": "4",
+        "input": "prompt"
+      },
+      "description": "Qwen Image Editへ渡す編集指示。"
+    },
+    {
+      "key": "referenceImage",
+      "label": "編集元画像",
+      "type": "image",
+      "required": true,
+      "default": null,
+      "options": [],
+      "mapping": {
+        "nodeId": "1",
+        "input": "image"
+      },
+      "description": "合成画像または利用許諾のある画像を指定する。"
+    },
+    {
+      "key": "negativePrompt",
+      "label": "ネガティブプロンプト",
+      "type": "textarea",
+      "required": true,
+      "default": " ",
+      "options": [],
+      "mapping": {
+        "nodeId": "5",
+        "input": "prompt"
+      },
+      "description": null
+    },
+    {
+      "key": "width",
+      "label": "幅",
+      "type": "integer",
+      "required": true,
+      "default": 1344,
+      "options": [],
+      "mapping": {
+        "nodeId": "3",
+        "input": "width"
+      },
+      "description": null
+    },
+    {
+      "key": "height",
+      "label": "高さ",
+      "type": "integer",
+      "required": true,
+      "default": 768,
+      "options": [],
+      "mapping": {
+        "nodeId": "3",
+        "input": "height"
+      },
+      "description": null
+    },
+    {
+      "key": "seed",
+      "label": "Seed",
+      "type": "integer",
+      "required": true,
+      "default": 2026091301,
+      "options": [],
+      "mapping": {
+        "nodeId": "6",
+        "input": "seed"
+      },
+      "description": null
+    },
+    {
+      "key": "steps",
+      "label": "Steps",
+      "type": "integer",
+      "required": true,
+      "default": 4,
+      "options": [],
+      "mapping": {
+        "nodeId": "6",
+        "input": "steps"
+      },
+      "description": null
+    },
+    {
+      "key": "cfg",
+      "label": "CFG",
+      "type": "number",
+      "required": true,
+      "default": 1.0,
+      "options": [],
+      "mapping": {
+        "nodeId": "6",
+        "input": "cfg"
+      },
+      "description": null
+    }
+  ],
+  "requiredNodeClasses": [
+    "LoadImage",
+    "CheckpointLoaderSimple",
+    "EmptyLatentImage",
+    "TextEncodeQwenImageEditPlus",
+    "KSampler",
+    "VAEDecode",
+    "SaveImage"
+  ],
+  "outputMapping": {
+    "nodeId": "8",
+    "input": "filename_prefix"
+  },
+  "remoteOutputPrefix": "image/rcm/qwen-rapid-aio-nsfw-v23-edit",
+  "executionTargets": [
+    "pod"
+  ]
+}
