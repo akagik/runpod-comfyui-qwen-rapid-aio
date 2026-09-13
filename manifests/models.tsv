@@ -1,0 +1,2 @@
+variant	repo	revision	repo_path	target_rel	size_bytes	sha256
+nsfw-v23	Phr00t/Qwen-Image-Edit-Rapid-AIO	691024f438640508f8aa86414863fc15edfb8a84	v23/Qwen-Rapid-AIO-NSFW-v23.safetensors	checkpoints/Qwen-Rapid-AIO-NSFW-v23.safetensors	28431840023	fdb919fc81bea63f13759967fc92c9118142e5c70d4e6795199233a35eefa233

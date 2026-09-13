@@ -1,0 +1,114 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "reference.png"
+    }
+  },
+  "2": {
+    "class_type": "CheckpointLoaderSimple",
+    "inputs": {
+      "ckpt_name": "Qwen-Rapid-AIO-NSFW-v23.safetensors"
+    }
+  },
+  "3": {
+    "class_type": "EmptyLatentImage",
+    "inputs": {
+      "width": 1344,
+      "height": 768,
+      "batch_size": 1
+    }
+  },
+  "4": {
+    "class_type": "TextEncodeQwenImageEditPlus",
+    "inputs": {
+      "clip": [
+        "2",
+        1
+      ],
+      "prompt": "Picture 1 の人物の顔、髪、ポーズ、視線、カメラ、照明、背景、フレーミングを維持する。指定した変更だけを適用し、自然な皮膚のきめと解剖学的整合性を保つ。",
+      "vae": [
+        "2",
+        2
+      ],
+      "image1": [
+        "1",
+        0
+      ],
+      "target_latent": [
+        "3",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Positive · author v2 target-latent encoder"
+    }
+  },
+  "5": {
+    "class_type": "TextEncodeQwenImageEditPlus",
+    "inputs": {
+      "clip": [
+        "2",
+        1
+      ],
+      "prompt": " ",
+      "vae": [
+        "2",
+        2
+      ]
+    },
+    "_meta": {
+      "title": "Negative (CFG 1.0)"
+    }
+  },
+  "6": {
+    "class_type": "KSampler",
+    "inputs": {
+      "model": [
+        "2",
+        0
+      ],
+      "seed": 2026091301,
+      "steps": 8,
+      "cfg": 1.0,
+      "sampler_name": "euler_ancestral",
+      "scheduler": "beta",
+      "positive": [
+        "4",
+        0
+      ],
+      "negative": [
+        "5",
+        0
+      ],
+      "latent_image": [
+        "3",
+        0
+      ],
+      "denoise": 1.0
+    }
+  },
+  "7": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "6",
+        0
+      ],
+      "vae": [
+        "2",
+        2
+      ]
+    }
+  },
+  "8": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": [
+        "7",
+        0
+      ],
+      "filename_prefix": "qwen-rapid/nsfw-v23-8step-target-latent"
+    }
+  }
+}
